@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Impactos Sociais dos Jogos de Azar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#12060b;--bg2:#1f0c14;--card:#2a1019;--ink:#fbf1e4;--mute:#c9a9a0;--gold:#ffc43d;--red:#ff4d5e;--green:#3ddc97;--line:#4a2330;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#fff6e8;--bg2:#ffe9c9;--card:#fffdf8;--ink:#2a0d16;--mute:#7a4a4f;--gold:#b87400;--red:#d62839;--green:#12805a;--line:#e8c9a0}}
+:root[data-theme="light"]{--bg:#fff6e8;--bg2:#ffe9c9;--card:#fffdf8;--ink:#2a0d16;--mute:#7a4a4f;--gold:#b87400;--red:#d62839;--green:#12805a;--line:#e8c9a0}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(ellipse at 50% -10%,var(--bg2),var(--bg) 70%);color:var(--ink);font:400 17px/1.55 'DM Sans',system-ui,sans-serif;overflow:hidden}
+h1,h2,h3{font-family:'Bungee','Impact',sans-serif;font-weight:400;line-height:1.05;margin:0 0 .5em;letter-spacing:.01em}
+h2{font-size:clamp(1.7rem,4.2vw,2.8rem);color:var(--gold)}
+h3{font-size:1.15rem;color:var(--ink)}
+p{margin:.4em 0;max-width:68ch}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.gold{color:var(--gold)}.red{color:var(--red)}.green{color:var(--green)}.mute{color:var(--mute)}
+
+/* INTRO */
+#intro{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:20px;text-align:center;background:radial-gradient(circle at 50% 40%,#3a0f1f,#12060b 70%);color:#fbf1e4;transition:opacity .7s,transform .7s}
+#intro.out{opacity:0;transform:scale(1.08);pointer-events:none}
+#intro h1{font-size:clamp(1.4rem,4vw,2.3rem);color:#ffc43d;text-shadow:0 0 18px rgba(255,196,61,.5)}
+.machine{background:linear-gradient(#c8102e,#7a0a1c);border:6px solid #ffc43d;border-radius:26px;padding:18px 18px 14px;box-shadow:0 0 0 4px #5a0714,0 0 50px rgba(255,77,94,.45)}
+.lights{display:flex;justify-content:space-between;margin-bottom:10px}
+.lights i{width:12px;height:12px;border-radius:50%;background:#ffc43d;animation:blink 1s infinite}
+.lights i:nth-child(even){animation-delay:.5s}
+@keyframes blink{50%{opacity:.2}}
+.reels{display:flex;gap:10px;background:#12060b;padding:10px;border-radius:14px;border:3px solid #3a0f1f}
+.reel{width:clamp(70px,22vw,110px);height:clamp(90px,28vw,140px);overflow:hidden;background:#fff4dc;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:clamp(2.6rem,10vw,4.6rem);box-shadow:inset 0 10px 18px rgba(0,0,0,.35),inset 0 -10px 18px rgba(0,0,0,.35)}
+.reel.spin span{animation:shake .08s infinite;filter:blur(2px)}
+@keyframes shake{0%{transform:translateY(-14px)}100%{transform:translateY(14px)}}
+.msg{min-height:3.2em;font-size:1.05rem;max-width:34ch}
+.btn{background:linear-gradient(var(--gold),#e59a00);color:#2a0d16;border:0;border-radius:999px;padding:.75em 1.6em;font-weight:700;box-shadow:0 5px 0 #a86a00;transition:transform .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #a86a00}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line);box-shadow:none}
+#intro .btn[hidden]{display:none}
+.skip{background:none;border:0;color:#c9a9a0;text-decoration:underline;font-size:.9rem}
+
+/* DECK */
+#deck{position:fixed;inset:0;display:flex;flex-direction:column}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 18px;font-size:.85rem;color:var(--mute)}
+header.top b{font-family:'Bungee',sans-serif;font-weight:400;color:var(--gold)}
+#bar{height:4px;background:var(--line)}#bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--red));transition:width .4s}
+#slides{flex:1;position:relative;min-height:0}
+.slide{position:absolute;inset:0;overflow-y:auto;padding:clamp(16px,4vw,48px) clamp(16px,6vw,80px);opacity:0;visibility:hidden;transform:translateX(30px);transition:opacity .35s,transform .35s,visibility .35s}
+.slide.on{opacity:1;visibility:visible;transform:none}
+.slide.prev{transform:translateX(-30px)}
+.wrap{max-width:1050px;margin:0 auto}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));margin-top:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.card.big{border-top:4px solid var(--gold)}
+nav.ctl{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 18px}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dots button{width:11px;height:11px;border-radius:50%;border:0;background:var(--line);padding:0}
+.dots button.on{background:var(--gold);transform:scale(1.35)}
+.navb{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:.55em 1.2em}
+.navb:disabled{opacity:.35;cursor:default}
+.stat{font-family:'Bungee',sans-serif;font-size:clamp(2rem,6vw,3.6rem);line-height:1}
+.pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:.2em .8em;font-size:.85rem;color:var(--mute);margin:2px 4px 2px 0}
+
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.tab{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:.45em 1.1em}
+.tab[aria-selected=true]{background:var(--gold);color:#2a0d16;border-color:var(--gold);font-weight:700}
+.panel{display:none}.panel.on{display:block;animation:pop .3s}
+@keyframes pop{from{opacity:0;transform:scale(.97)}}
+
+/* sliders */
+label.s{display:block;margin:12px 0 2px;font-weight:500}
+input[type=range]{width:100%;accent-color:var(--gold)}
+.meter{height:18px;border-radius:99px;background:var(--line);overflow:hidden;margin:8px 0}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--gold),var(--red));transition:width .4s}
+.bars{display:flex;gap:4px;margin:10px 0}.bars i{flex:1;height:26px;border-radius:5px;background:var(--line);transition:background .3s}
+.bars i.w{background:var(--green)}.bars i.l{background:var(--red)}
+svg.chart{width:100%;height:150px;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
+
+/* mito/fato + quiz */
+.flip{perspective:900px;cursor:pointer;border:0;background:none;padding:0;text-align:left;min-height:170px}
+.flip .in{position:relative;width:100%;height:100%;min-height:170px;transition:transform .6s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:16px;padding:16px;backface-visibility:hidden;border:1px solid var(--line);background:var(--card)}
+.flip .b{transform:rotateY(180deg);background:var(--bg2)}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:.7em 1em;margin:8px 0}
+.opt.ok{border-color:var(--green);background:rgba(61,220,151,.15)}.opt.no{border-color:var(--red);background:rgba(255,77,94,.15)}
+.opt:disabled{cursor:default;color:inherit}
+.fb{min-height:3em;margin-top:8px}
+.hint{font-size:.9rem;color:var(--mute)}
+table{border-collapse:collapse;width:100%;margin-top:10px;font-size:.95rem}
+td,th{border-bottom:1px solid var(--line);padding:8px;text-align:left}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- INTRO: caça-níquel -->
+<section id="intro" aria-label="Abertura">
+  <h1>Tente a sorte…</h1>
+  <div class="machine">
+    <div class="lights"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="reels" aria-live="polite">
+      <div class="reel"><span>🐯</span></div><div class="reel"><span>💰</span></div><div class="reel"><span>🍀</span></div>
+    </div>
+  </div>
+  <div class="msg" id="msg">Girando…</div>
+  <button class="btn" id="again" hidden>Girar de novo</button>
+  <button class="btn" id="enter" hidden>Entrar na apresentação</button>
+  <button class="skip" id="skip">pular abertura</button>
+</section>
+
+<!-- DECK -->
+<main id="deck">
+  <header class="top"><b>Educação Financeira</b><span id="count">1 / 12</span></header>
+  <div id="bar"><i></i></div>
+  <div id="slides">
+
+    <!-- 1 capa -->
+    <section class="slide wrap-s on"><div class="wrap">
+      <p class="pill">Trabalho de conclusão • 3º ano</p>
+      <h1 style="font-size:clamp(2.2rem,7vw,4.6rem);color:var(--gold)">Impactos sociais dos jogos de azar</h1>
+      <p style="font-size:1.25rem">e análise de risco: probabilidade, consequências e decisões conscientes.</p>
+      <div class="grid">
+        <div class="card"><div class="mute">Professor</div><b>Rodrigo</b></div>
+        <div class="card"><div class="mute">Alunos</div><b>Victoria Lima<br>Bruno Eduardo Peruzzo</b></div>
+        <div class="card"><div class="mute">Foco</div><b>Informação, prevenção e escolhas conscientes</b></div>
+      </div>
+      <p class="hint" style="margin-top:18px">Use as setas do teclado, os botões ou deslize para navegar.</p>
+    </div></section>
+
+    <!-- 2 intro / conceitos -->
+    <section class="slide"><div class="wrap">
+      <h2>Por que falar disso?</h2>
+      <p>Jogos de azar são atividades em que o resultado depende principalmente do acaso e nas quais se arrisca dinheiro. Nas apostas online, tudo acontece no celular, com estímulos constantes para continuar.</p>
+      <p class="hint">Toque nos cartões para ver as definições.</p>
+      <div class="grid" id="concepts"></div>
+      <div class="card big" style="margin-top:16px"><b>Importante:</b> habilidade, estatísticas ou análise mudam a forma de escolher, mas não eliminam a incerteza nem garantem lucro.</div>
+    </div></section>
+
+    <!-- 3 atenção -->
+    <section class="slide"><div class="wrap">
+      <h2>Como as apostas chamam atenção</h2>
+      <p>Marque o que você já viu em anúncios ou aplicativos:</p>
+      <div class="grid" id="hooks"></div>
+      <p id="hookmsg" class="gold" style="margin-top:14px"></p>
+    </div></section>
+
+    <!-- 4 impactos -->
+    <section class="slide"><div class="wrap">
+      <h2>Impactos: muito além do dinheiro</h2>
+      <div class="tabs" role="tablist" id="tabs1"></div>
+      <div id="panels1"></div>
+    </div></section>
+
+    <!-- 5 orçamento -->
+    <section class="slide"><div class="wrap">
+      <h2>Pequenos valores somam</h2>
+      <p>Simule quanto fica exposto ao risco. (Exemplo da apresentação: R$ 15 por dia, 20 dias, renda de R$ 1.500.)</p>
+      <div class="grid">
+        <div class="card">
+          <label class="s">Valor por dia: <b id="vd">R$ 15</b></label><input type="range" id="rd" min="1" max="100" value="15">
+          <label class="s">Dias por mês: <b id="vn">20</b></label><input type="range" id="rn" min="1" max="30" value="20">
+          <label class="s">Renda mensal: <b id="vr">R$ 1.500</b></label><input type="range" id="rr" min="500" max="8000" step="100" value="1500">
+        </div>
+        <div class="card big">
+          <div class="mute">Apostado em 1 mês</div><div class="stat gold" id="o1">R$ 300</div>
+          <div class="mute" style="margin-top:10px">Apostado em 6 meses</div><div class="stat" id="o6">R$ 1.800</div>
+          <div class="mute" style="margin-top:10px">Parcela da renda</div><div class="stat" id="op">20%</div>
+          <div class="meter"><i id="om"></i></div><div class="hint" id="ot"></div>
+        </div>
+      </div>
+      <p class="hint">“Apostado” não é o mesmo que “perdido”: o saldo real depende dos resultados. O ponto é ver quanto dinheiro fica exposto.</p>
+    </div></section>
+
+    <!-- 6 probabilidade -->
+    <section class="slide"><div class="wrap">
+      <h2>Uma chance não é uma promessa</h2>
+      <p>Defina quantos resultados favoráveis existem entre os possíveis (todos igualmente prováveis).</p>
+      <div class="grid">
+        <div class="card">
+          <label class="s">Favoráveis: <b id="pf">1</b></label><input type="range" id="rf" min="1" max="10" value="1">
+          <label class="s">Possíveis: <b id="pp">5</b></label><input type="range" id="rp" min="2" max="20" value="5">
+          <div class="mute" style="margin-top:12px">Chance de ocorrer</div><div class="stat green" id="pa">20%</div>
+          <div class="mute" style="margin-top:8px">Chance de NÃO ocorrer</div><div class="stat red" id="pb">80%</div>
+        </div>
+        <div class="card">
+          <h3>Teste: 10 tentativas</h3>
+          <div class="bars" id="trials"></div>
+          <button class="btn" id="tryit">Tentar a sorte</button>
+          <p id="tmsg" class="hint" style="margin-top:10px"></p>
+          <p class="hint">Mesmo com 20%, perder várias vezes seguidas é comum, e cada tentativa é independente da anterior.</p>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 7 valor esperado -->
+    <section class="slide"><div class="wrap">
+      <h2>Valor esperado</h2>
+      <p>VE = (chance de ganhar × ganho) + (chance de perder × perda). É uma média teórica, não o resultado de uma pessoa.</p>
+      <div class="grid">
+        <div class="card">
+          <label class="s">Chance de ganhar: <b id="ep">20%</b></label><input type="range" id="re1" min="5" max="95" step="5" value="20">
+          <label class="s">Ganho líquido: <b id="eg">R$ 50</b></label><input type="range" id="re2" min="10" max="200" step="5" value="50">
+          <label class="s">Perda: <b id="el">R$ 15</b></label><input type="range" id="re3" min="5" max="100" step="5" value="15">
+          <div class="mute" style="margin-top:12px">Valor esperado por tentativa</div><div class="stat" id="ev">−R$ 2</div>
+          <div class="hint" id="evx"></div>
+          <button class="btn" id="sim" style="margin-top:10px">Simular 200 tentativas</button>
+        </div>
+        <div class="card">
+          <h3>Seu saldo ao longo do tempo</h3>
+          <svg class="chart" id="svg" viewBox="0 0 400 150" preserveAspectRatio="none"><line x1="0" y1="75" x2="400" y2="75" stroke="currentColor" opacity=".3" stroke-dasharray="4"/><polyline id="pl" fill="none" stroke="#ffc43d" stroke-width="2"/></svg>
+          <p id="simmsg" class="hint">Clique em simular. Com VE negativo, a tendência é descer, apesar das altas pelo caminho.</p>
+          <p class="hint">Em muitos jogos comerciais, as regras fazem o VE do jogador ser negativo.</p>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 8 risco e alerta -->
+    <section class="slide"><div class="wrap">
+      <h2>Análise de risco e sinais de alerta</h2>
+      <p>Risco = probabilidade × consequência. Pergunte: “o que acontece se eu perder? Consigo lidar com isso?”</p>
+      <table><tr><th>Situação</th><th>Leitura</th></tr>
+        <tr><td>Arriscar dinheiro reservado para uma conta</td><td class="red">Alto: afeta necessidade essencial</td></tr>
+        <tr><td>Apostar valor que não pode ser perdido</td><td class="red">Alto: pouca capacidade de absorver a perda</td></tr>
+        <tr><td>Não apostar e guardar o dinheiro</td><td class="green">Protege o orçamento</td></tr></table>
+      <h3 style="margin-top:22px">Sinais de alerta (marque para contar)</h3>
+      <div class="grid" id="alerts"></div>
+      <p id="almsg" class="gold" style="margin-top:12px"></p>
+    </div></section>
+
+    <!-- 9 prevenção -->
+    <section class="slide"><div class="wrap">
+      <h2>Prevenção e onde buscar ajuda</h2>
+      <div class="grid">
+        <div class="card big"><h3>Proteja o orçamento</h3><p>Não use dinheiro de necessidades essenciais. Desconfie de lucro garantido e “métodos infalíveis”.</p></div>
+        <div class="card big"><h3>Decida com calma</h3><p>Evite decidir sob pressão, raiva, tristeza ou vontade de recuperar perdas.</p></div>
+        <div class="card big"><h3>Converse</h3><p>Fale com adulto de confiança, familiar, orientador escolar ou profissional de saúde.</p></div>
+        <div class="card big"><h3>Busque apoio no SUS</h3><p>Se estiver difícil de controlar, procure uma UBS ou serviço de saúde mental do SUS. Não é preciso esperar uma dívida grande.</p></div>
+      </div>
+      <div class="card" style="margin-top:16px"><b class="gold">Menores de 18 anos não devem participar de apostas.</b> A proteção de crianças e adolescentes é prioridade.</div>
+    </div></section>
+
+    <!-- 10 mito ou fato -->
+    <section class="slide"><div class="wrap">
+      <h2>Mito ou fato?</h2>
+      <p class="hint">Pense, vote com a turma e toque no cartão para revelar.</p>
+      <div class="grid" id="myths"></div>
+    </div></section>
+
+    <!-- 11 quiz -->
+    <section class="slide"><div class="wrap">
+      <h2>Desafio e quiz</h2>
+      <div class="card" style="max-width:760px">
+        <div class="hint" id="qn"></div>
+        <h3 id="qt" style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:1.15rem;line-height:1.4"></h3>
+        <div id="qo"></div><div class="fb" id="qf"></div>
+        <button class="btn" id="qnext" hidden>Próxima</button>
+      </div>
+    </div></section>
+
+    <!-- 12 conclusão -->
+    <section class="slide"><div class="wrap">
+      <h2>Conclusão</h2>
+      <p style="font-size:1.2rem">Apostas envolvem incerteza e podem gerar impactos financeiros, emocionais, familiares e sociais. Entender probabilidade ajuda a interpretar chances, mas não elimina o risco.</p>
+      <div class="grid">
+        <div class="card"><div class="stat gold">0%</div><p>de ganho garantido</p></div>
+        <div class="card"><div class="stat green">100%</div><p>do orçamento essencial protegido quando você não arrisca</p></div>
+        <div class="card"><div class="stat">18+</div><p>idade mínima para apostar</p></div>
+      </div>
+      <div class="card big" style="margin-top:16px"><b>Mensagem final:</b> não existe ganho garantido. Informação, prevenção e apoio fazem diferença.</div>
+      <p class="hint" style="margin-top:14px">Referências: Banco Central (cidadania financeira), Ministério da Saúde (RAPS/SUS), Secretaria de Prêmios e Apostas (Min. da Fazenda). Material educativo; não substitui orientação profissional.</p>
+      <button class="btn ghost" id="restart" style="margin-top:12px">Voltar ao início</button>
+    </div></section>
+  </div>
+  <nav class="ctl">
+    <button class="navb" id="pv">Anterior</button>
+    <div class="dots" id="dots"></div>
+    <button class="navb" id="nx">Próximo</button>
+  </nav>
+</main>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const R=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
+
+/* ===== INTRO ===== */
+const SYM=['🐯','💰','🍀','💎','7️⃣','🍒'];
+const reels=$$('.reel'),msg=$('#msg');
+let timers=[];
+function spin(){
+  $('#again').hidden=$('#enter').hidden=true;msg.textContent='Girando…';
+  const results=[['🐯','🐯','💎'],['🍒','🐯','🐯'],['💰','7️⃣','💰'],['🐯','💎','🐯']];
+  const fin=results[Math.floor(Math.random()*results.length)];
+  reels.forEach((r,i)=>{
+    r.classList.add('spin');
+    const sp=r.firstElementChild;
+    timers[i]=setInterval(()=>sp.textContent=SYM[Math.floor(Math.random()*SYM.length)],70);
+    setTimeout(()=>{clearInterval(timers[i]);r.classList.remove('spin');sp.textContent=fin[i];
+      if(i==2)done(fin)},1300+i*700);
+  });
+}
+function done(f){
+  const near=f[0]===f[1]||f[1]===f[2]||f[0]===f[2];
+  msg.textContent=near?'Quase! Duas iguais e a terceira por pouco. Essa sensação de “quase ganhei” é um truque de design.':'Não foi dessa vez. E se tentasse de novo? É assim que o ciclo começa.';
+  $('#again').hidden=false;$('#enter').hidden=false;
+}
+function enter(){$('#intro').classList.add('out');timers.forEach(clearInterval)}
+$('#again').onclick=spin;$('#enter').onclick=enter;$('#skip').onclick=enter;
+setTimeout(spin,500);
+
+/* ===== DECK ===== */
+const slides=$$('.slide');let cur=0;
+const dots=$('#dots');
+slides.forEach((_,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','Slide '+(i+1));b.onclick=()=>go(i);dots.appendChild(b)});
+function go(n){
+  n=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach((s,i)=>{s.classList.toggle('on',i===n);s.classList.toggle('prev',i<n);if(i===n)s.scrollTop=0});
+  cur=n;$('#count').textContent=(n+1)+' / '+slides.length;
+  $('#bar i').style.width=((n+1)/slides.length*100)+'%';
+  $$('#dots button').forEach((b,i)=>b.classList.toggle('on',i===n));
+  $('#pv').disabled=n===0;$('#nx').disabled=n===slides.length-1;
+}
+$('#pv').onclick=()=>go(cur-1);$('#nx').onclick=()=>go(cur+1);$('#restart').onclick=()=>go(0);
+addEventListener('keydown',e=>{if(e.target.matches('input'))return;if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1)});
+let tx=null;
+$('#slides').addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+$('#slides').addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>70)go(cur+(d<0?1:-1));tx=null});
+go(0);
+
+/* conceitos */
+const C=[['Jogo de azar','Resultado depende principalmente do acaso, como a roleta.'],['Aposta esportiva','Dinheiro colocado em um palpite sobre um evento esportivo.'],['Probabilidade','Medida da chance de um resultado ocorrer.'],['Risco','Possibilidade de um resultado negativo e o tamanho de suas consequências.'],['Valor esperado','Média teórica de ganhos e perdas ao repetir uma situação muitas vezes.']];
+function flipCard(front,back){const b=document.createElement('button');b.className='flip';b.innerHTML=`<div class="in"><div class="f">${front}</div><div class="b">${back}</div></div>`;b.onclick=()=>b.classList.toggle('on');return b}
+C.forEach(([t,d])=>$('#concepts').appendChild(flipCard(`<h3 class="gold">${t}</h3><span class="hint">toque para ver</span>`,`<p>${d}</p>`)));
+
+/* ganchos */
+const H=['Acesso pelo celular a qualquer hora','Bônus e notificações que destacam ganhos','Resultados rápidos que incentivam novas tentativas','Histórias de vencedores, sem mostrar as perdas','Sensação de controle sobre algo incerto'];
+let hk=0;
+H.forEach(t=>{const b=document.createElement('button');b.className='card';b.style.textAlign='left';b.textContent=t;b.onclick=()=>{b.classList.toggle('big');hk=$$('#hooks .big').length;
+ $('#hookmsg').textContent=hk?hk+' de 5 estratégias reconhecidas. Promoção não é informação completa sobre riscos.':''};$('#hooks').appendChild(b)});
+
+/* impactos */
+const I=[['Financeiros','Perda do dinheiro de transporte, alimentação, estudos ou lazer; uso de crédito; dívidas; tentar recuperar perdas apostando mais.'],['Emocionais','Estresse, culpa, irritação, ansiedade e preocupação constante. Uma perda pode gerar vontade de apostar de novo para compensar.'],['Familiares','Discussões, quebra de confiança, segredos sobre gastos, afastamento de amigos. Atinge também quem não aposta, mas depende do orçamento da casa.'],['Sociais','Mais procura por apoio financeiro e emocional, endividamento e desigualdades maiores quando quem tem menos arrisca o essencial.']];
+I.forEach(([t,d],i)=>{
+  const b=document.createElement('button');b.className='tab';b.textContent=t;b.setAttribute('role','tab');b.setAttribute('aria-selected',i==0);
+  const p=document.createElement('div');p.className='panel card big'+(i==0?' on':'');p.innerHTML=`<h3>${t}</h3><p>${d}</p>`;
+  b.onclick=()=>{$$('#tabs1 .tab').forEach(x=>x.setAttribute('aria-selected',x===b));$$('#panels1 .panel').forEach(x=>x.classList.toggle('on',x===p))};
+  $('#tabs1').appendChild(b);$('#panels1').appendChild(p)});
+
+/* orçamento */
+function bud(){
+  const d=+$('#rd').value,n=+$('#rn').value,r=+$('#rr').value,m=d*n,pc=m/r*100;
+  $('#vd').textContent=R(d);$('#vn').textContent=n;$('#vr').textContent=R(r);
+  $('#o1').textContent=R(m);$('#o6').textContent=R(m*6);$('#op').textContent=pc.toFixed(1).replace('.',',')+'%';
+  $('#om').style.width=Math.min(100,pc*2.5)+'%';
+  $('#ot').textContent=pc<5?'Parcela pequena, mas ainda soma ao longo dos meses.':pc<15?'Já pesa no orçamento. Dá para viver sem esse valor?':'Parcela alta da renda: risco de comprometer necessidades básicas.';
+}
+['rd','rn','rr'].forEach(i=>$('#'+i).oninput=bud);bud();
+
+/* probabilidade */
+function prob(){
+  let f=+$('#rf').value,p=+$('#rp').value;if(f>p){f=p;$('#rf').value=f}
+  $('#pf').textContent=f;$('#pp').textContent=p;
+  const a=f/p*100;$('#pa').textContent=a.toFixed(0)+'%';$('#pb').textContent=(100-a).toFixed(0)+'%';
+}
+$('#rf').oninput=$('#rp').oninput=prob;prob();
+for(let i=0;i<10;i++)$('#trials').appendChild(document.createElement('i'));
+$('#tryit').onclick=()=>{
+  const a=+$('#rf').value/+$('#rp').value;let w=0,streak=0,best=0;
+  $$('#trials i').forEach((e,i)=>setTimeout(()=>{const win=Math.random()<a;e.className=win?'w':'l';if(win){w++;streak=0}else{streak++;best=Math.max(best,streak)}
+    if(i==9)$('#tmsg').textContent=`${w} vitória(s) em 10. Maior sequência de derrotas: ${best}.`},i*120));
+};
+
+/* valor esperado */
+function ev(){
+  const p=+$('#re1').value/100,g=+$('#re2').value,l=+$('#re3').value,v=p*g-(1-p)*l;
+  $('#ep').textContent=Math.round(p*100)+'%';$('#eg').textContent=R(g);$('#el').textContent=R(l);
+  const e=$('#ev');e.textContent=(v<0?'−':v>0?'+':'')+R(Math.abs(v));e.className='stat '+(v<0?'red':v>0?'green':'');
+  $('#evx').textContent=`(${Math.round(p*100)}% × ${R(g)}) + (${Math.round((1-p)*100)}% × −${R(l)})`;
+}
+['re1','re2','re3'].forEach(i=>$('#'+i).oninput=ev);ev();
+$('#sim').onclick=()=>{
+  const p=+$('#re1').value/100,g=+$('#re2').value,l=+$('#re3').value;let s=0,pts=[0],mn=0,mx=0;
+  for(let i=0;i<200;i++){s+=Math.random()<p?g:-l;pts.push(s);mn=Math.min(mn,s);mx=Math.max(mx,s)}
+  const span=Math.max(mx-mn,1);
+  $('#pl').setAttribute('points',pts.map((y,i)=>(i/200*400).toFixed(1)+','+(140-(y-mn)/span*130).toFixed(1)).join(' '));
+  const z=140-(0-mn)/span*130;$('#svg line').setAttribute('y1',z);$('#svg line').setAttribute('y2',z);
+  $('#simmsg').textContent=`Saldo final após 200 tentativas: ${s<0?'−':'+'}${R(Math.abs(s))}. Rode de novo: cada simulação é diferente.`;
+};
+
+/* alertas */
+const A=['Apostar para recuperar o que perdeu','Gastar mais tempo ou dinheiro do que pretendia','Esconder apostas ou mentir sobre gastos','Ficar irritado ou ansioso quando não consegue apostar','Usar dinheiro de contas, estudos ou necessidades','Deixar de estudar ou conviver por causa das apostas'];
+A.forEach(t=>{const b=document.createElement('button');b.className='card';b.style.textAlign='left';b.textContent=t;b.onclick=()=>{b.classList.toggle('big');const n=$$('#alerts .big').length;
+ $('#almsg').textContent=n?`${n} sinal(is) marcado(s). Sinais não servem para rotular ninguém: são motivo para conversar com alguém de confiança e buscar apoio cedo.`:''};$('#alerts').appendChild(b)});
+
+/* mito ou fato */
+const M=[['“Se perdi várias vezes seguidas, agora estou mais perto de ganhar.”','MITO','Resultados aleatórios independentes não são obrigados a compensar perdas anteriores.'],['“Uma aposta pode afetar pessoas da família que não apostam.”','FATO','O dinheiro e a confiança familiar podem ser afetados.'],['“Ganhar uma vez prova que existe um método garantido.”','MITO','Um ganho isolado não prova que o método funcione sempre.'],['“Analisar risco inclui pensar na consequência de perder.”','FATO','Risco considera tanto a chance quanto o impacto do resultado.'],['“Se o valor apostado é pequeno, nunca faz diferença.”','MITO','Valores repetidos somam e podem comprometer o orçamento.']];
+M.forEach(([q,a,e])=>$('#myths').appendChild(flipCard(`<p><b>${q}</b></p><span class="hint">toque para revelar</span>`,`<h3 class="${a=='MITO'?'red':'green'}">${a}</h3><p>${e}</p>`)));
+
+/* quiz */
+const Q=[
+['Cenário: você tem R$ 100 para transporte e alimentação da semana. Um colega diz que dá para virar R$ 200 rapidamente. O mais responsável é:',['Apostar tudo porque o ganho seria útil','Apostar metade para “diminuir o risco”','Manter o dinheiro para as necessidades','Pedir emprestado para apostar mais'],2,'O dinheiro já tem finalidade importante e uma perda comprometeria necessidades básicas.'],
+['Uma pessoa aposta R$ 12 por dia durante 15 dias. Quanto colocou em apostas?',['R$ 27','R$ 120','R$ 150','R$ 180'],3,'12 × 15 = R$ 180. É o total apostado, não necessariamente a perda líquida.'],
+['2 resultados favoráveis entre 10 igualmente prováveis. Qual a probabilidade?',['2%','10%','20%','50%'],2,'2 ÷ 10 = 0,2 = 20%.'],
+['Jogo com 1/5 de chance de ganhar R$ 50 e 4/5 de perder R$ 15. Qual o valor esperado?',['−R$ 2','R$ 0','R$ 5','R$ 10'],0,'(1/5 × 50) + (4/5 × −15) = 10 − 12 = −R$ 2 por tentativa.'],
+['Qual situação é um sinal de alerta?',['Comparar preços de material escolar','Planejar o orçamento','Apostar de novo para recuperar uma perda','Guardar dinheiro para uma meta'],2,'Tentar recuperar perdas pode levar a apostar mais e aumentar o prejuízo.']];
+let qi=0,score=0;
+function showQ(){
+  if(qi>=Q.length){$('#qn').textContent='Resultado';$('#qt').textContent=`Você acertou ${score} de ${Q.length}.`;$('#qo').innerHTML='';
+    $('#qf').textContent=score===Q.length?'Excelente! Você analisa risco com consciência.':'Revise os slides e tente de novo.';$('#qnext').textContent='Refazer quiz';$('#qnext').hidden=false;$('#qnext').onclick=()=>{qi=0;score=0;showQ()};return}
+  const [t,o,c,e]=Q[qi];$('#qn').textContent=`Questão ${qi+1} de ${Q.length}`;$('#qt').textContent=t;$('#qf').textContent='';$('#qnext').hidden=true;
+  $('#qo').innerHTML='';
+  o.forEach((x,i)=>{const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+') '+x;
+    b.onclick=()=>{$$('#qo .opt').forEach((y,j)=>{y.disabled=true;if(j===c)y.classList.add('ok')});
+      if(i===c)score++;else b.classList.add('no');
+      $('#qf').textContent=(i===c?'Correto. ':'Não foi dessa vez. ')+e;
+      $('#qnext').textContent=qi===Q.length-1?'Ver resultado':'Próxima';$('#qnext').hidden=false;$('#qnext').onclick=()=>{qi++;showQ()}};
+    $('#qo').appendChild(b)});
+}
+showQ();
+</script>
+</body>
+</html>
